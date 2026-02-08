@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (!token) {
     // 未登入 → 導向 login，並記錄原本想去的頁面
-    return <Navigate to="/#/admin/login" replace state={{ from: location }} />;
+    return <Navigate to="/admin/login" replace state={{ from: location }} />;
   }
 
   return children; // 已登入 → 放行
