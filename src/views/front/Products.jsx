@@ -2,12 +2,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toastError, toastSuccess } from "../../utils/toast";
+import { RotatingLines } from "react-loader-spinner";
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
 
 function Products() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const [loadingCartId, setLoadingCartId] = useState(null);
+  const [productId, setProductId] = useState(null);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -31,6 +34,7 @@ function Products() {
     // }
   };
   const addCart = async (id, num = 1) => {
+    setLoadingCartId(id);
     try {
       const data = { product_id: id, qty: num };
       const res = await axios.post(`${API_BASE}/api/${API_PATH}/cart`, { data });
@@ -38,6 +42,8 @@ function Products() {
     } catch (error) {
       console.log(error.response);
       toastError(`加入購物車失敗,${error.response.data.message}`);
+    } finally {
+      setLoadingCartId(null);
     }
   };
   return (
@@ -75,8 +81,9 @@ function Products() {
                   onClick={() => {
                     addCart(product.id);
                   }}
+                  disabled={loadingCartId === product.id}
                 >
-                  加入購物車
+                  {loadingCartId === product.id ? <RotatingLines color="white" width={80} height={16} /> : "加入購物車"}
                 </button>
               </div>
             </div>

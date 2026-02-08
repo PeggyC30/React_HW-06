@@ -31,3 +31,18 @@ img {
 .images {
   height: 150px;
 }
+.nav-link.active {
+  color: white !important;
+  font-weight: bold;
+  background-color: blue;
+  border-radius: 10%;
+}
+.nav-link {
+  transition: all 0.2s ease;
+  border-radius: 10%;
+}
+
+.nav-link:hover {
+  background-color: rgba(0, 0, 255, 0.15);
+  color: blue;
+}

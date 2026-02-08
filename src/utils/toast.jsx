@@ -13,6 +13,17 @@ const Toast = Swal.mixin({
   },
 });
 
+export const confirmAlert = (title, text) => {
+  return Swal.fire({
+    title,
+    text,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "確定",
+    cancelButtonText: "取消",
+  });
+};
+
 export const toastSuccess = (title) => Toast.fire({ icon: "success", title });
 
 export const toastError = (title) => Toast.fire({ icon: "error", title });

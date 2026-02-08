@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router";
 
-function FrontendLayout() {
+function AdminLayout() {
   return (
     <>
       <header>
@@ -22,7 +22,7 @@ function FrontendLayout() {
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/admin/products">
-              管理者登入
+              管理者
             </NavLink>
           </li>
         </ul>
@@ -35,4 +35,4 @@ function FrontendLayout() {
   );
 }
 
-export default FrontendLayout;
+export default AdminLayout;

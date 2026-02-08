@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import * as bootstrap from "bootstrap";
-import "./style.css";
-import ProductModal from "./components/ProductModal";
-import Pagination from "./components/Pagination";
-import Login from "./views/Login";
+import "../../style.css";
+import ProductModal from "../../components/ProductModal";
+import Pagination from "../../components/Pagination";
+import Login from "../Login";
+import { RotatingLines } from "react-loader-spinner";
+import { Navigate, useNavigate } from "react-router";
 
 const API_BASE = import.meta.env.VITE_API_BASE;
 const API_PATH = import.meta.env.VITE_API_PATH;
@@ -24,7 +26,7 @@ const INITIAL_TEMPLATE_DATA = {
   imagesUrl: [],
 };
 
-function App() {
+function AdminProducts() {
   // 登入狀態管理(控制顯示登入或產品頁）
   const [isAuth, setIsAuth] = useState(false);
   // 產品資料狀態
@@ -40,6 +42,8 @@ function App() {
 
   const productModalRef = useRef(null);
 
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   useEffect(() => {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     if (token) {
@@ -61,9 +65,10 @@ function App() {
       try {
         const res = await axios.post(`${API_BASE}/api/user/check`);
 
-        setIsAuth(true);
+        // setIsAuth(true);
         getProducts();
       } catch (error) {
+        navigate("/admin/login");
         console.log(error.response.data.message);
       }
     };
@@ -80,27 +85,32 @@ function App() {
   };
 
   const getProducts = async (page = 1) => {
+    setLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/api/${API_PATH}/admin/products?page=${page}`);
       setProducts(res.data.products);
       setPagination(res.data.pagination);
     } catch (error) {
       console.log(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      {!isAuth ? (
-        <Login setIsAuth={setIsAuth} getProducts={getProducts} />
-      ) : (
-        <div className="container">
-          <h2>產品列表</h2>
-          <div className="text-end mt-4">
-            <button type="button" className="btn btn-primary" onClick={() => openModal("creat", INITIAL_TEMPLATE_DATA)}>
-              建立新的產品
-            </button>
+      <div className="container">
+        <h2>產品列表</h2>
+        <div className="text-end mt-4">
+          <button type="button" className="btn btn-primary" onClick={() => openModal("creat", INITIAL_TEMPLATE_DATA)}>
+            建立新的產品
+          </button>
+        </div>
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center mt-5 mb-5">
+            <RotatingLines color="gray" width="80" />
           </div>
+        ) : (
           <table className="table">
             <thead>
               <tr>
@@ -149,9 +159,9 @@ function App() {
               ))}
             </tbody>
           </table>
-          <Pagination pagination={pagination} getProducts={getProducts} />
-        </div>
-      )}
+        )}
+        <Pagination pagination={pagination} getProducts={getProducts} />
+      </div>
 
       <ProductModal
         getProducts={getProducts}
@@ -164,4 +174,4 @@ function App() {
   );
 }
 
-export default App;
+export default AdminProducts;
